@@ -1,0 +1,997 @@
+<html><head><base href="." />
+<title>Enregistreur d'Écran Universel</title>
+<style>
+    /* Add new styles for header and footer */
+    .header {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        width: 100%;
+        backdrop-filter: blur(10px);
+        position: relative; /* For marquee positioning */
+        top: 0;
+        left: 0;
+        z-index: 100;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .header-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.5em;
+        font-weight: bold;
+        text-decoration: none;
+        color: white;
+    }
+
+    .header-nav {
+        display: flex;
+        gap: 20px;
+    }
+
+    .header-nav a {
+        color: white;
+        text-decoration: none;
+        padding: 8px 15px;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .header-nav a:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .datetime-display {
+        font-size: 0.9em;
+        margin-right: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .marquee-container {
+        position: absolute;
+        bottom: -20px;
+        left: 0;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 5px 0;
+        overflow: hidden;
+    }
+
+    .marquee {
+        white-space: nowrap;
+        animation: marquee 20s linear infinite;
+    }
+
+    .language-selector {
+        position: relative;
+        margin-right: 20px;
+    }
+
+    .language-selector select {
+        padding: 5px 10px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    @keyframes marquee {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+    }
+
+    .footer {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 40px 20px;
+        width: 100%;
+        margin-top: 50px;
+        backdrop-filter: blur(10px);
+    }
+
+    .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 40px;
+    }
+
+    .footer-section {
+        color: white;
+    }
+
+    .footer-section h3 {
+        margin-bottom: 15px;
+        font-size: 1.2em;
+    }
+
+    .footer-section ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .footer-section li {
+        margin-bottom: 10px;
+    }
+
+    .footer-bottom {
+        text-align: center;
+        padding-top: 20px;
+        margin-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .social-links {
+        display: flex;
+        gap: 15px;
+        margin-top: 15px;
+    }
+
+    .social-links svg {
+        width: 24px;
+        height: 24px;
+        fill: white;
+        transition: transform 0.3s ease;
+    }
+
+    .social-links svg:hover {
+        transform: scale(1.2);
+    }
+
+    /* Adjust main content padding for header */
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+        padding-top: 80px;
+        background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+        color: white;
+    }
+
+    .auth-container {
+        text-align: center;
+        max-width: 400px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 30px;
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .auth-form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .auth-form input {
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        font-size: 16px;
+    }
+
+    .auth-form input::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .switch-form {
+        margin-top: 15px;
+        color: #2196F3;
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
+    #main-container {
+        display: none;
+    }
+
+    .container {
+        text-align: center;
+        max-width: 800px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 30px;
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .platform-icons {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin: 20px 0;
+    }
+
+    .platform-icon {
+        width: 40px;
+        height: 40px;
+        fill: white;
+        transition: transform 0.3s ease;
+    }
+
+    .platform-icon:hover {
+        transform: scale(1.2);
+    }
+
+    .controls {
+        margin: 20px 0;
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    button {
+        padding: 15px 30px;
+        font-size: 1.1em;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #4CAF50;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        filter: brightness(1.1);
+    }
+
+    button:active {
+        transform: translateY(1px);
+    }
+
+    button:disabled {
+        background: #666;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+        opacity: 0.7;
+    }
+
+    #stopBtn {
+        background: #f44336;
+    }
+
+    #saveBtn {
+        background: #2196F3;
+    }
+
+    #preview {
+        max-width: 100%;
+        margin-top: 20px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease;
+    }
+
+    #preview:hover {
+        transform: scale(1.02);
+    }
+
+    .recording-indicator {
+        display: none;
+        align-items: center;
+        gap: 10px;
+        margin: 20px 0;
+        padding: 10px 20px;
+        background: rgba(255, 0, 0, 0.2);
+        border-radius: 50px;
+        animation: glow 2s infinite;
+    }
+
+    .recording-dot {
+        width: 12px;
+        height: 12px;
+        background: red;
+        border-radius: 50%;
+        animation: pulse 1s infinite;
+    }
+
+    .quality-selector {
+        margin: 20px 0;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+    }
+
+    select {
+        padding: 10px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        margin: 0 10px;
+    }
+
+    .info-box {
+        background: rgba(33, 150, 243, 0.2);
+        padding: 20px;
+        border-radius: 15px;
+        margin: 15px 0;
+        border: 1px solid rgba(33, 150, 243, 0.3);
+        backdrop-filter: blur(5px);
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.2); opacity: 0.8; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes glow {
+        0% { box-shadow: 0 0 5px rgba(255, 0, 0, 0.2); }
+        50% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.4); }
+        100% { box-shadow: 0 0 5px rgba(255, 0, 0, 0.2); }
+    }
+</style>
+</head>
+<body>
+<header class="header">
+    <a href="/" class="header-logo">
+        🎥 ScreenRecorder Pro
+    </a>
+    
+    <div class="datetime-display">
+        <span id="current-time">00:00:00</span>
+        <span id="current-date">01/01/2024</span>
+    </div>
+    
+    <div class="language-selector">
+        <select id="language-select" onchange="changeLanguage()">
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="de">Deutsch</option>
+        </select>
+    </div>
+    
+    <nav class="header-nav">
+        <a href="#home" data-translate="home">Accueil</a>
+        <a href="#features" data-translate="features">Fonctionnalités</a>
+        <a href="#support" data-translate="support">Support</a>
+        <div id="user-info" style="display: none;">
+            <span id="user-name"></span>
+        </div>
+    </nav>
+    
+    <div class="marquee-container">
+        <div class="marquee">
+            🎥 Bienvenue sur ScreenRecorder Pro! Enregistrez facilement votre écran pour WhatsApp, YouTube, Facebook, Instagram, TikTok et plus encore! 
+        </div>
+    </div>
+</header>
+
+    <div class="auth-container" id="auth-container">
+        <h1>🎥 Bienvenue</h1>
+        
+        <!-- Login Form -->
+        <div id="login-form" class="auth-form">
+            <h2 data-translate="login">Connexion</h2>
+            <input type="email" placeholder="Email" id="login-email" required>
+            <input type="password" placeholder="Mot de passe" id="login-password" required>
+            <button id="login-btn">Se connecter</button>
+            <p class="switch-form" onclick="toggleForms()">Pas encore de compte ? S'inscrire</p>
+        </div>
+
+        <!-- Register Form -->
+        <div id="register-form" class="auth-form" style="display: none;">
+            <h2 data-translate="register">Inscription</h2>
+            <input type="text" placeholder="Nom complet" id="register-name" required>
+            <input type="email" placeholder="Email" id="register-email" required>
+            <input type="password" placeholder="Mot de passe" id="register-password" required>
+            <button id="register-btn">S'inscrire</button>
+            <p class="switch-form" onclick="toggleForms()">Déjà un compte ? Se connecter</p>
+        </div>
+    </div>
+
+    <div class="container" id="main-container">
+        <h1>🎥 Enregistreur d'Écran Universel</h1>
+        <p>Capturez votre écran pour toutes les plateformes sociales</p>
+
+        <div class="platform-icons">
+            <svg class="platform-icon" viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
+            <svg class="platform-icon" viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg>
+            <svg class="platform-icon" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+            <svg class="platform-icon" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+        </div>
+
+        <div class="quality-selector">
+            <label for="quality" data-translate="videoQuality">Qualité vidéo:</label>
+            <select id="quality">
+                <option value="480">480p - Réseaux sociaux standards</option>
+                <option value="720">720p - YouTube/Facebook</option>
+                <option value="1080">1080p - Haute qualité</option>
+            </select>
+        </div>
+
+        <div class="info-box">
+            <span data-translate="tips">ℹ️ Conseils pour chaque plateforme:</span>
+            <br>• WhatsApp: Max 16MB, 3 minutes
+            <br>• Instagram: Max 60 secondes (feed), 15 secondes (stories)
+            <br>• TikTok: Max 3 minutes
+            <br>• YouTube: Pas de limite
+        </div>
+
+        <div class="recording-indicator" id="recordingIndicator">
+            <div class="recording-dot"></div>
+            <span data-translate="recording">⚡ Enregistrement en cours...</span>
+        </div>
+
+        <div class="controls">
+            <button id="startBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+                Démarrer l'enregistrement
+            </button>
+            <button id="stopBtn" disabled>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="6" y="6" width="12" height="12"/>
+                </svg>
+                Arrêter
+            </button>
+            <button id="saveBtn" disabled>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                    <polyline points="17 21 17 13 7 13 7 21"/>
+                </svg>
+                Sauvegarder
+            </button>
+        </div>
+
+        <video id="preview" controls autoplay muted></video>
+    </div>
+
+    <script>
+        const translations = {
+          fr: {
+            welcome: "Bienvenue sur ScreenRecorder Pro!",
+            home: "Accueil",
+            features: "Fonctionnalités", 
+            support: "Support",
+            login: "Connexion",
+            register: "Inscription",
+            recordingTip: "Enregistrez facilement votre écran pour WhatsApp, YouTube, Facebook, Instagram, TikTok et plus encore!",
+            startRecording: "Démarrer l'enregistrement",
+            stop: "Arrêter",
+            save: "Sauvegarder",
+            videoQuality: "Qualité vidéo:",
+            tips: "Conseils pour chaque plateforme:",
+            recording: "⚡ Enregistrement en cours...",
+            logout: "Se déconnecter"
+          },
+          en: {
+            welcome: "Welcome to ScreenRecorder Pro!",
+            home: "Home",
+            features: "Features",
+            support: "Support", 
+            login: "Login",
+            register: "Register",
+            recordingTip: "Easily record your screen for WhatsApp, YouTube, Facebook, Instagram, TikTok and more!",
+            startRecording: "Start Recording",
+            stop: "Stop",
+            save: "Save",
+            videoQuality: "Video Quality:",
+            tips: "Platform Tips:",
+            recording: "⚡ Recording in progress...",
+            logout: "Logout"
+          },
+          es: {
+            welcome: "¡Bienvenido a ScreenRecorder Pro!",
+            home: "Inicio",
+            features: "Características",
+            support: "Soporte",
+            login: "Iniciar sesión", 
+            register: "Registrarse",
+            recordingTip: "¡Grabe fácilmente su pantalla para WhatsApp, YouTube, Facebook, Instagram, TikTok y más!",
+            startRecording: "Iniciar Grabación",
+            stop: "Detener",
+            save: "Guardar",
+            videoQuality: "Calidad de video:",
+            tips: "Consejos para cada plataforma:",
+            recording: "⚡ Grabación en curso...",
+            logout: "Cerrar sesión"
+          },
+          de: {
+            welcome: "Willkommen bei ScreenRecorder Pro!",
+            home: "Startseite",
+            features: "Funktionen",
+            support: "Support",
+            login: "Anmelden",
+            register: "Registrieren",
+            recordingTip: "Nehmen Sie Ihren Bildschirm einfach für WhatsApp, YouTube, Facebook, Instagram, TikTok und mehr auf!",
+            startRecording: "Aufnahme starten",
+            stop: "Stoppen",
+            save: "Speichern", 
+            videoQuality: "Videoqualität:",
+            tips: "Plattform-Tipps:",
+            recording: "⚡ Aufnahme läuft...",
+            logout: "Abmelden"
+          }
+        };
+
+        const authContainer = document.getElementById('auth-container');
+        const mainContainer = document.getElementById('main-container');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+
+        // Check if user is logged in
+        function checkAuth() {
+            const user = localStorage.getItem('user');
+            if (user) {
+                authContainer.style.display = 'none';
+                mainContainer.style.display = 'block';
+                updateUserInfo(); // Add this line
+            } else {
+                authContainer.style.display = 'block';
+                mainContainer.style.display = 'none';
+            }
+        }
+
+        // Update user info in header when logged in
+        function updateUserInfo() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const userInfo = document.getElementById('user-info');
+            const userName = document.getElementById('user-name');
+            
+            if (user) {
+                userInfo.style.display = 'block';
+                userName.textContent = `👋 ${user.name}`;
+            } else {
+                userInfo.style.display = 'none';
+            }
+        }
+
+        // Toggle between login and register forms
+        function toggleForms() {
+            if (loginForm.style.display === 'none') {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+            } else {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+            }
+        }
+
+        // Handle login
+        document.getElementById('login-btn').addEventListener('click', () => {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            // Simple validation
+            if (!email || !password) {
+                alert('Veuillez remplir tous les champs');
+                return;
+            }
+
+            // Check if user exists in localStorage
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.email === email && u.password === password);
+
+            if (user) {
+                localStorage.setItem('user', JSON.stringify(user));
+                checkAuth();
+            } else {
+                alert('Email ou mot de passe incorrect');
+            }
+        });
+
+        // Handle registration
+        document.getElementById('register-btn').addEventListener('click', () => {
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+
+            // Simple validation
+            if (!name || !email || !password) {
+                alert('Veuillez remplir tous les champs');
+                return;
+            }
+
+            // Get existing users or initialize empty array
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+
+            // Check if email already exists
+            if (users.some(u => u.email === email)) {
+                alert('Cet email est déjà utilisé');
+                return;
+            }
+
+            // Add new user
+            const newUser = { name, email, password };
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('user', JSON.stringify(newUser));
+
+            alert('Inscription réussie!');
+            checkAuth();
+        });
+
+        // Add logout functionality
+        const logoutBtn = document.createElement('button');
+        logoutBtn.textContent = translations.fr.logout;
+        logoutBtn.style.background = '#666';
+        logoutBtn.style.marginTop = '20px';
+        document.querySelector('.controls').appendChild(logoutBtn);
+
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('user');
+            checkAuth();
+        });
+
+        // Check auth status when page loads
+        checkAuth();
+        
+        function updateDateTime() {
+            const timeDisplay = document.getElementById('current-time');
+            const dateDisplay = document.getElementById('current-date');
+            const lang = document.getElementById('language-select').value;
+            
+            // Map language codes to proper locale codes
+            const localeMap = {
+                'fr': 'fr-FR',
+                'en': 'en-US',
+                'es': 'es-ES',
+                'de': 'de-DE'
+            };
+            
+            const locale = localeMap[lang] || 'fr-FR'; // Default to French if language not found
+            
+            const now = new Date();
+            
+            try {
+                // Update time with locale and options
+                timeDisplay.textContent = now.toLocaleTimeString(locale, {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                
+                // Update date with locale and options
+                dateDisplay.textContent = now.toLocaleDateString(locale, {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                });
+            } catch (error) {
+                console.error('Locale error:', error);
+                // Fallback to basic format if locale fails
+                timeDisplay.textContent = now.toLocaleTimeString();
+                dateDisplay.textContent = now.toLocaleDateString();
+            }
+        }
+
+        // Initialize datetime with proper locale
+        document.addEventListener('DOMContentLoaded', () => {
+            // ... (keep existing code)
+            
+            // Initialize datetime with proper locale
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+        });
+
+        function changeLanguage() {
+            const lang = document.getElementById('language-select').value;
+            localStorage.setItem('preferredLanguage', lang);
+            
+            // Update text content for all translatable elements
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+
+            // Update marquee text safely
+            const marqueeText = (translations[lang]?.welcome || translations['fr'].welcome) + " " +
+                "🎥 " + (translations[lang]?.recordingTip || translations['fr'].recordingTip);
+            document.querySelector('.marquee').textContent = marqueeText;
+
+            // Update buttons text
+            if (translations[lang]) {
+                const startBtn = document.getElementById('startBtn');
+                const stopBtn = document.getElementById('stopBtn');
+                const saveBtn = document.getElementById('saveBtn');
+                
+                if (startBtn) startBtn.textContent = translations[lang].startRecording || translations['fr'].startRecording;
+                if (stopBtn) stopBtn.textContent = translations[lang].stop || translations['fr'].stop;
+                if (saveBtn) saveBtn.textContent = translations[lang].save || translations['fr'].save;
+            }
+        }
+
+        function setupFooterLinks() {
+          // Social media links
+          document.querySelectorAll('.social-links a').forEach(link => {
+            link.addEventListener('click', (e) => {
+              e.preventDefault();
+              const url = link.getAttribute('href');
+              window.open(url, '_blank');
+            });
+          });
+
+          // Quick links
+          document.querySelectorAll('.footer-section a').forEach(link => {
+            link.addEventListener('click', (e) => {
+              e.preventDefault();
+              const target = link.getAttribute('href').replace('#', '');
+              
+              // Show appropriate content based on link clicked
+              switch(target) {
+                case 'features':
+                  showFeatures();
+                  break;
+                case 'pricing':
+                  showPricing();
+                  break;
+                case 'tutorial':
+                  showTutorial();
+                  break;
+                case 'faq':
+                  showFAQ();
+                  break;
+                case 'contact':
+                  showContact();
+                  break;
+                case 'privacy':
+                  showPrivacyPolicy();
+                  break;
+                // Add more cases as needed
+              }
+            });
+          });
+        }
+
+        // Add content display functions
+        function showFeatures() {
+          alert('Chargement des fonctionnalités...');
+          // Implement feature content display
+        }
+
+        function showPricing() {
+          alert('Chargement des tarifs...');
+          // Implement pricing content display
+        }
+
+        function showTutorial() {
+          alert('Chargement du tutoriel...');
+          // Implement tutorial content display
+        }
+
+        function showFAQ() {
+          alert('Chargement de la FAQ...');
+          // Implement FAQ content display
+        }
+
+        function showContact() {
+          alert('Chargement du formulaire de contact...');
+          // Implement contact form display
+        }
+
+        function showPrivacyPolicy() {
+          alert('Chargement de la politique de confidentialité...');
+          // Implement privacy policy display
+        }
+
+        function setupHeaderNavigation() {
+          // Navigation links
+          document.querySelectorAll('.header-nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+              e.preventDefault();
+              const target = link.getAttribute('href').replace('#', '');
+              
+              switch(target) {
+                case 'home':
+                  window.location.href = '/';
+                  break;
+                case 'features':
+                  showFeatures();
+                  break;
+                case 'support':
+                  showContact();
+                  break;
+              }
+            });
+          });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+          setupFooterLinks();
+          setupHeaderNavigation();
+          
+          // Set initial language based on localStorage or browser preference
+          const savedLang = localStorage.getItem('preferredLanguage') || 
+                            navigator.language.split('-')[0] || 'fr';
+          document.getElementById('language-select').value = savedLang;
+          changeLanguage();
+          
+          // Start datetime updates
+          updateDateTime();
+          setInterval(updateDateTime, 1000);
+          
+          // Initialize marquee animation
+          const marquee = document.querySelector('.marquee');
+          marquee.addEventListener('animationend', () => {
+            marquee.style.animation = 'none';
+            setTimeout(() => {
+              marquee.style.animation = 'marquee 20s linear infinite';
+            }, 10);
+          });
+        });
+
+        let mediaRecorder;
+        let recordedChunks = [];
+        let recordedBlob = null;
+        
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const preview = document.getElementById('preview');
+        const recordingIndicator = document.getElementById('recordingIndicator');
+        const qualitySelector = document.getElementById('quality');
+
+        startBtn.addEventListener('click', async () => {
+            try {
+                const quality = parseInt(qualitySelector.value);
+                const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const displayStream = await navigator.mediaDevices.getDisplayMedia({
+                    video: {
+                        cursor: "always",
+                        frameRate: { ideal: 30 },
+                        height: { ideal: quality },
+                        width: { ideal: quality * (16/9) }
+                    }
+                });
+
+                const tracks = [...displayStream.getTracks(), ...audioStream.getTracks()];
+                const combinedStream = new MediaStream(tracks);
+
+                preview.srcObject = combinedStream;
+                mediaRecorder = new MediaRecorder(combinedStream, {
+                    mimeType: 'video/webm;codecs=h264',
+                    videoBitsPerSecond: quality >= 1080 ? 8000000 : quality >= 720 ? 5000000 : 2500000
+                });
+
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+
+                mediaRecorder.onstop = () => {
+                    recordedBlob = new Blob(recordedChunks, {
+                        type: 'video/mp4'
+                    });
+                    const url = URL.createObjectURL(recordedBlob);
+                    preview.srcObject = null;
+                    preview.src = url;
+
+                    tracks.forEach(track => track.stop());
+
+                    const sizeInMB = recordedBlob.size / (1024 * 1024);
+                    if (sizeInMB > 16) {
+                        alert(`⚠️ La taille de la vidéo est de ${sizeInMB.toFixed(1)} MB. Elle pourrait être trop grande pour certaines plateformes.`);
+                    }
+
+                    startBtn.disabled = false;
+                    stopBtn.disabled = true;
+                    saveBtn.disabled = false;
+                    recordingIndicator.style.display = 'none';
+                };
+
+                mediaRecorder.start(1000);
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                saveBtn.disabled = true;
+                recordingIndicator.style.display = 'flex';
+
+                displayStream.getVideoTracks()[0].onended = () => {
+                    if (mediaRecorder.state === 'recording') {
+                        mediaRecorder.stop();
+                    }
+                };
+
+            } catch (err) {
+                console.error("Erreur:", err);
+                alert("❌ Erreur lors de l'accès à l'écran ou au microphone. Veuillez réessayer.");
+            }
+        });
+
+        stopBtn.addEventListener('click', () => {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+            }
+        });
+
+        saveBtn.addEventListener('click', () => {
+            if (recordedBlob) {
+                const now = new Date();
+                const timestamp = now.toISOString().replace(/[:.]/g, '-');
+                const quality = qualitySelector.value;
+                const filename = `capture-${quality}p-${timestamp}.mp4`;
+                
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(recordedBlob);
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                recordedChunks = [];
+                recordedBlob = null;
+                saveBtn.disabled = true;
+            }
+        });
+    </script>
+
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3>À propos</h3>
+            <p>ScreenRecorder Pro est votre solution complète pour l'enregistrement d'écran professionnel, compatible avec toutes les plateformes sociales.</p>
+            <div class="social-links">
+                <a href="https://twitter.com/screenrecorder"><svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
+                <a href="https://facebook.com/screenrecorder"><svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+                <a href="https://instagram.com/screenrecorder"><svg viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg></a>
+            </div>
+        </div>
+        <div class="footer-section">
+            <h3>Liens Rapides</h3>
+            <ul>
+                <li><a href="#features">Fonctionnalités</a></li>
+                <li><a href="#pricing">Tarifs</a></li>
+                <li><a href="#tutorial">Tutoriels</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h3>Support</h3>
+            <ul>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#help">Centre d'aide</a></li>
+                <li><a href="#community">Communauté</a></li>
+                <li><a href="#feedback">Feedback</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h3>Légal</h3>
+            <ul>
+                <li><a href="#privacy">Politique de confidentialité</a></li>
+                <li><a href="#terms">Conditions d'utilisation</a></li>
+                <li><a href="#gdpr">RGPD</a></li>
+                <li><a href="#cookies">Cookies</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2024 ScreenRecorder Pro. Tous droits réservés.</p>
+    </div>
+</footer>
+</body></html>
